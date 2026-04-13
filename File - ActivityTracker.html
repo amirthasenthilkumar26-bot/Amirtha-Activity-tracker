@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Tracker </title>
+    
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: #2d3436;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Progress Display */
+        .progress-box {
+            background: #f1f3f5;
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        #progress-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0984e3;
+        }
+
+        /* Activity List */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item span {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+
+        .activity-item.completed span {
+            text-decoration: line-through;
+            color: #a0aec0;
+        }
+
+        /* Buttons */
+        .btn-check {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-check:hover {
+            background-color: #00a884;
+        }
+
+        .btn-check:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Final Message */
+        .congrats-msg {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #00b894;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>My Daily Tasks</h1>
+            <p style="color: #636e72; font-size: 0.9rem;"></p>
+        </header>
+
+        <div class="progress-box">
+            <span id="progress-text">0 of 0 Completed</span>
+        </div>
+
+        <ul id="activity-list" class="activity-list">
+            </ul>
+
+        <div id="congrats" class="congrats-msg">
+            🎉 Excellent! You've finished everything!
+        </div>
+    </div>
+
+    <script>
+        // 1. Array of activity objects (Your Data Source)
+        const activities = [
+            { id: 1, name: "Morning Workout", completed: false },
+            { id: 2, name: "Read 10 Pages", completed: false },
+            { id: 3, name: "Code for 2 Hours", completed: false },
+            { id: 4, name: "Drink Water", completed: false }
+        ];
+
+        const listContainer = document.getElementById('activity-list');
+        const progressDisplay = document.getElementById('progress-text');
+        const congratsDisplay = document.getElementById('congrats');
+
+        // 2. Render Function (Updates the UI based on data)
+        function updateUI() {
+            listContainer.innerHTML = ''; // Reset list
+            let count = 0;
+
+            activities.forEach(item => {
+                if (item.completed) count++;
+
+                // Create list item
+                const li = document.createElement('li');
+                li.className = `activity-item ${item.completed ? 'completed' : ''}`;
+                
+                li.innerHTML = `
+                    <span>${item.name}</span>
+                    <button class="btn-check" 
+                            ${item.completed ? 'disabled' : ''} 
+                            onclick="markAsDone(${item.id})">
+                        ${item.completed ? 'Done' : 'Complete'}
+                    </button>
+                `;
+                listContainer.appendChild(li);
+            });
+
+            // Update progress text
+            progressDisplay.innerText = `${count} of ${activities.length} Completed`;
+
+            // Edge case: All tasks finished
+            congratsDisplay.style.display = (count === activities.length) ? 'block' : 'none';
+        }
+
+        // 3. Logic: Mark activity as completed
+        function markAsDone(id) {
+            // Find the task by ID in the array
+            const taskIndex = activities.findIndex(a => a.id === id);
+            
+            if (taskIndex !== -1) {
+                activities[taskIndex].completed = true;
+                updateUI(); // Refresh the UI to reflect changes
+            }
+        }
+
+        // Run on load
+        updateUI();
+    </script>
+</body>
+</html>
